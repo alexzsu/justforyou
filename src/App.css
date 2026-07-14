@@ -1,21 +1,14 @@
 .app{
+    min-height:100vh;
+    width:100%;
 
-width:100vw;
-height:100vh;
+    overflow-y:auto;
+    overflow-x:hidden;
 
-display:flex;
-justify-content:center;
-align-items:center;
+    display:flex;
+    justify-content:center;
 
-padding:20px;
-
-background:linear-gradient(
-180deg,
-#FFF8F3,
-#FDECEF,
-#F4EDFF
-);
-
+    padding:0;
 }
 
 .particles{
@@ -123,32 +116,25 @@ scale(1);
 }
 
 .phone{
+    width:100%;
+    max-width:430px;
 
-width:100%;
+    min-height:100vh;
 
-max-width:430px;
+    padding:24px 20px 40px;
 
-height:100dvh;
+    display:flex;
+    flex-direction:column;
+    gap:20px;
 
-margin:auto;
+    box-sizing:border-box;
 
-padding:
+    background:transparent;
 
-max(20px,env(safe-area-inset-top))
+    border-radius:0;
 
-20px
-
-max(20px,env(safe-area-inset-bottom));
-
-
-display:flex;
-
-flex-direction:column;
-
-overflow:hidden;
-
+    box-shadow:none;
 }
-
 .header{
 
 text-align:center;
@@ -310,7 +296,11 @@ color:white;
 
 .queue{
 
-margin-top:auto;
+display:flex;
+
+flex-direction:column;
+
+gap:15px;
 
 }
 
@@ -590,5 +580,39 @@ font-family:
 "Quicksand",
 
 sans-serif;
+
+}
+
+html,
+body,
+#root{
+
+    margin:0;
+
+    padding:0;
+
+    width:100%;
+
+    min-height:100%;
+
+    overflow-x:hidden;
+
+}
+
+@media (max-width:768px){
+
+.phone{
+
+    width:100%;
+
+    max-width:none;
+
+    border-radius:0;
+
+    min-height:100vh;
+
+    padding:20px;
+
+}
 
 }
