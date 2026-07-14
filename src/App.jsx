@@ -16,300 +16,192 @@ function App() {
 
   const [currentSong, setCurrentSong] = useState(playlist[0]);
 
-  const [showPopup,setShowPopup]=useState(false);
+  const [showPopup, setShowPopup] = useState(false);
   const [showEnding, setShowEnding] = useState(false);
-  const [showSmilePopup, setShowSmilePopup] = useState(false);
 
+  const [isPlaying, setIsPlaying] = useState(false);
 
-  const [isPlaying,setIsPlaying]=useState(false);
-
-  const [currentTime,setCurrentTime]=useState(0);
-
-  const [duration,setDuration]=useState(0);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
   const [secretUnlocked, setSecretUnlocked] = useState(false);
 
-  const audioRef=useRef(new Audio());
+  const secretSong = playlist.find(song => song.secret);
+  const visibleSongs = playlist.filter(song => !song.secret);
+  const lastVisibleSong = visibleSongs[visibleSongs.length - 1];
 
+  const audioRef = useRef(new Audio());
+
+  // Load a new song whenever currentSong changes (NOT on isPlaying toggle)
   useEffect(() => {
-
     const audio = audioRef.current;
 
     audio.pause();
-
     audio.src = currentSong.audio;
-
     audio.load();
 
     if (isPlaying) {
-
-        audio.play().catch(() => {});
-
+      audio.play().catch(() => {});
     }
+  }, [currentSong]);
 
-}, [currentSong, isPlaying]);
+  useEffect(() => {
+    const audio = audioRef.current;
 
-    useEffect(() => {
-
-  const audio = audioRef.current;
-
-  const handleEnded = () => {
-
-
-    if(currentSong.id===9){
-
+    const handleEnded = () => {
+      if (currentSong.id === lastVisibleSong.id) {
         setIsPlaying(false);
-
         setShowPopup(true);
+        return;
+      }
+
+      if (currentSong.secret) {
+        setIsPlaying(false);
+        setShowEnding(true);
+
+        setTimeout(() => {
+          setShowEnding(false);
+          setSecretUnlocked(false);
+          setShowPopup(false);
+          setCurrentSong(playlist[0]);
+          audioRef.current.pause();
+          audioRef.current.currentTime = 0;
+          setCurrentTime(0);
+          setIsPlaying(false);
+        }, 5000);
 
         return;
+      }
 
-    }
+      nextSong();
+    };
 
-    if (currentSong.id === 10) {
+    audio.addEventListener("ended", handleEnded);
 
-    setIsPlaying(false);
+    return () => {
+      audio.removeEventListener("ended", handleEnded);
+    };
+  }, [currentSong]);
 
-    setShowEnding(true);
+  useEffect(() => {
+    const audio = audioRef.current;
 
-    setTimeout(() => {
+    const update = () => {
+      setCurrentTime(audio.currentTime);
+    };
 
-        setShowEnding(false);
+    const loaded = () => {
+      setDuration(audio.duration);
+    };
 
-        setSecretUnlocked(false);
+    audio.addEventListener("timeupdate", update);
+    audio.addEventListener("loadedmetadata", loaded);
 
-        setShowPopup(false);
+    return () => {
+      audio.removeEventListener("timeupdate", update);
+      audio.removeEventListener("loadedmetadata", loaded);
+    };
+  }, []);
 
-        setCurrentSong(playlist[0]);
-
-        audioRef.current.pause();
-
-        audioRef.current.currentTime = 0;
-
-        setCurrentTime(0);
-
-        setIsPlaying(false);
-
-    }, 5000);
-
-    return;
-
-}
-
-    nextSong();
-
-};
-
-  audio.addEventListener(
-    "ended",
-    handleEnded
-  );
-
-  return () => {
-
-    audio.removeEventListener(
-      "ended",
-      handleEnded
-    );
-
-  };
-
-}, [currentSong]);
-
-useEffect(()=>{
-
-const audio=audioRef.current;
-
-const update=()=>{
-
-setCurrentTime(audio.currentTime);
-
-}
-
-const loaded=()=>{
-
-setDuration(audio.duration);
-
-}
-
-audio.addEventListener("timeupdate",update);
-
-audio.addEventListener("loadedmetadata",loaded);
-
-return()=>{
-
-audio.removeEventListener("timeupdate",update);
-
-audio.removeEventListener("loadedmetadata",loaded);
-
-}
-
-},[]);
-
-const playPause = async () => {
-
+  const playPause = async () => {
     const audio = audioRef.current;
 
     if (isPlaying) {
-
-        audio.pause();
-
-        setIsPlaying(false);
-
+      audio.pause();
+      setIsPlaying(false);
     } else {
+      try {
+        await audio.play();
+        setIsPlaying(true);
+      } catch (err) {
+        console.log(err);
+      }
+    }
+  };
 
-        try {
+  const nextSong = () => {
+    if (currentSong.secret) return;
 
-            await audio.play();
+    const index = visibleSongs.findIndex(
+      song => song.id === currentSong.id
+    );
 
-            setIsPlaying(true);
-
-        } catch (err) {
-
-            console.log(err);
-
-        }
-
+    if (index === visibleSongs.length - 1) {
+      setShowPopup(true);
+      setIsPlaying(false);
+      return;
     }
 
-};
+    setCurrentSong(visibleSongs[index + 1]);
+  };
 
-const nextSong=()=>{
+  const previousSong = () => {
+    if (currentSong.secret) {
+      setCurrentSong(lastVisibleSong);
+      return;
+    }
 
-const index=playlist.findIndex(
+    const index = visibleSongs.findIndex(
+      song => song.id === currentSong.id
+    );
 
-s=>s.id===currentSong.id
-
-);
-
-const next=(index+1)%playlist.length;
-
-setCurrentSong(playlist[next]);
-
-}
-
-const previousSong=()=>{
-
-const index=playlist.findIndex(
-
-s=>s.id===currentSong.id
-
-);
-
-const prev=(index-1+playlist.length)%playlist.length;
-
-setCurrentSong(playlist[prev]);
-
-}
+    if (index > 0) {
+      setCurrentSong(visibleSongs[index - 1]);
+    }
+  };
 
   return (
-
-<div
-className="app"
-style={{
-
-background:`
-
-linear-gradient(
-180deg,
-
-${currentSong.theme},
-
-#ffffff
-
-)
-
-`
-
-}}
->
-
+    <div
+      className="app"
+      style={{
+        background: `linear-gradient(180deg, ${currentSong.theme}, #ffffff)`
+      }}
+    >
       <div className="particles">
-
-{
-
-Array.from({
-
-length:12
-
-}).map((_,i)=>(
-
-<span
-
-key={i}
-
-/>
-
-))
-
-}
-
-</div>
+        {Array.from({ length: 12 }).map((_, i) => (
+          <span key={i} />
+        ))}
+      </div>
 
       <div className="phone">
-
         <Header />
 
-        <AlbumPlayer
-
-        currentSong={currentSong}
-
-        isPlaying={isPlaying}
-
-        />
+        <AlbumPlayer currentSong={currentSong} isPlaying={isPlaying} />
 
         <ProgressBar
-
-        currentTime={currentTime}
-
-        duration={duration}
-
-        audioRef={audioRef}
-
-        setCurrentTime={setCurrentTime}
-
+          currentTime={currentTime}
+          duration={duration}
+          audioRef={audioRef}
+          setCurrentTime={setCurrentTime}
         />
 
         <PlayerControls
-
-        isPlaying={isPlaying}
-
-        playPause={playPause}
-
-        nextSong={nextSong}
-
-        previousSong={previousSong}
-
+          isPlaying={isPlaying}
+          playPause={playPause}
+          nextSong={nextSong}
+          previousSong={previousSong}
         />
 
         <Queue
           playlist={playlist}
           currentSong={currentSong}
           setCurrentSong={setCurrentSong}
+          secretUnlocked={secretUnlocked}
         />
-
       </div>
 
-    <Popup
-    showPopup={showPopup}
-    setShowPopup={setShowPopup}
-    onUnlock={() => {
+      <Popup
+        showPopup={showPopup}
+        setShowPopup={setShowPopup}
+        onUnlock={() => {
+          setSecretUnlocked(true);
+          setCurrentSong(secretSong);
+          setIsPlaying(true);
+        }}
+      />
 
-        setSecretUnlocked(true);
-
-        setCurrentSong(playlist[3]);
-
-        setIsPlaying(true);
-
-    }}
-/>
-
-
-<Ending showEnding={showEnding} />
-
+      <Ending showEnding={showEnding} />
     </div>
-
   );
-
 }
 
 export default App;

@@ -7,7 +7,6 @@ function Queue({
   secretUnlocked
 }) {
 
-  // Hide secret songs until unlocked
   const visibleSongs = playlist.filter(song => {
 
     if (song.secret && !secretUnlocked) {
@@ -15,7 +14,6 @@ function Queue({
     }
 
     return true;
-
   });
 
   return (
@@ -29,7 +27,7 @@ function Queue({
         <div
           key={song.id}
           className={`queueItem ${
-            currentSong.id === song.id
+            currentSong?.id === song.id
               ? "active"
               : ""
           }`}
