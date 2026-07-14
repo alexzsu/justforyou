@@ -1,384 +1,314 @@
 import "./App.css";
+
 import { useState, useRef, useEffect } from "react";
+
 import playlist from "./data/playlist";
 
-import {
-  FaPlay,
-  FaPause,
-  FaStepForward,
-  FaStepBackward
-} from "react-icons/fa";
+import Header from "./components/Header";
+import AlbumPlayer from "./components/AlbumPlayer";
+import ProgressBar from "./components/ProgressBar";
+import PlayerControls from "./components/PlayerControls";
+import Queue from "./components/Queue";
+import Popup from "./components/Popup";
+import Ending from "./components/Ending";
 
 function App() {
 
   const [currentSong, setCurrentSong] = useState(playlist[0]);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [showPopup, setShowPopup] = useState(false);
+
+  const [showPopup,setShowPopup]=useState(false);
+  const [showEnding, setShowEnding] = useState(false);
   const [showSmilePopup, setShowSmilePopup] = useState(false);
-  const [showSecretSong, setShowSecretSong] = useState(false);
 
-  const [currentTime, setCurrentTime] = useState(0);
-  const [duration, setDuration] = useState(0);
 
-  const audioRef = useRef(new Audio());
+  const [isPlaying,setIsPlaying]=useState(false);
+
+  const [currentTime,setCurrentTime]=useState(0);
+
+  const [duration,setDuration]=useState(0);
+  const [secretUnlocked, setSecretUnlocked] = useState(false);
+
+  const audioRef=useRef(new Audio());
 
   useEffect(() => {
 
     const audio = audioRef.current;
+
+    audio.pause();
 
     audio.src = currentSong.audio;
 
-    if(isPlaying){
+    audio.load();
 
-      audio.play();
+    if (isPlaying) {
 
-    }
-
-  },[currentSong]);
-
-  useEffect(()=>{
-
-    const audio = audioRef.current;
-
-    const updateTime=()=>{
-
-      setCurrentTime(audio.currentTime);
+        audio.play().catch(() => {});
 
     }
 
-    const loaded=()=>{
+}, [currentSong, isPlaying]);
 
-      setDuration(audio.duration);
+    useEffect(() => {
 
-    }
+  const audio = audioRef.current;
 
-    audio.addEventListener("timeupdate",updateTime);
+  const handleEnded = () => {
 
-    audio.addEventListener("loadedmetadata",loaded);
 
-    return()=>{
+    if(currentSong.id===9){
 
-      audio.removeEventListener("timeupdate",updateTime);
+        setIsPlaying(false);
 
-      audio.removeEventListener("loadedmetadata",loaded);
+        setShowPopup(true);
 
-    }
-
-  },[]);
-
-  const playPause=()=>{
-
-    const audio=audioRef.current;
-
-    if(isPlaying){
-
-      audio.pause();
-
-    }else{
-
-      audio.play();
+        return;
 
     }
 
-    setIsPlaying(!isPlaying);
+    if (currentSong.id === 10) {
 
-  }
+    setIsPlaying(false);
 
-  const nextSong=()=>{
+    setShowEnding(true);
 
-    const index=playlist.findIndex(
-      s=>s.id===currentSong.id
-    );
+    setTimeout(() => {
 
-    const next=(index+1)%playlist.length;
+        setShowEnding(false);
 
-    setCurrentSong(playlist[next]);
+        setSecretUnlocked(false);
 
-  }
+        setShowPopup(false);
 
-  const previousSong=()=>{
+        setCurrentSong(playlist[0]);
 
-    const index=playlist.findIndex(
-      s=>s.id===currentSong.id
-    );
+        audioRef.current.pause();
 
-    const prev=(index-1+playlist.length)%playlist.length;
+        audioRef.current.currentTime = 0;
 
-    setCurrentSong(playlist[prev]);
+        setCurrentTime(0);
 
-  }
+        setIsPlaying(false);
 
-  useEffect(() => {
+    }, 5000);
 
-    const audio = audioRef.current;
-
-    const handleEnded = () => {
-
-        const currentIndex = playlist.findIndex(
-            song => song.id === currentSong.id
-        );
-
-        // If you're only using 3 songs
-        if (currentIndex === playlist.length - 1) {
-            setIsPlaying(false);
-            setShowPopup(true);
-            return;
-        }
-
-        nextSong();
-
-    };
-
-    audio.addEventListener("ended", handleEnded);
-
-    return () => {
-        audio.removeEventListener("ended", handleEnded);
-    };
-
-}, [currentSong]);
-
-  const formatTime=(time)=>{
-
-    if(isNaN(time)) return "0:00";
-
-    const min=Math.floor(time/60);
-
-    const sec=Math.floor(time%60);
-
-    return `${min}:${sec.toString().padStart(2,"0")}`;
-
-  }
-
-  return(
-
-<div className="app">
-
-<div className="phone">
-
-<div className="header">
-
-<h1>for you</h1>
-
-<p>made especially for you.</p>
-
-</div>
-
-<div className="album">
-
-<img
-
-src={currentSong.cover}
-
-alt=""
-
-className={isPlaying ? "spin" : ""}
-
-/>
-
-</div>
-
-<div className="songInfo">
-
-<h2>{currentSong.title}</h2>
-
-<p>{currentSong.artist}</p>
-
-</div>
-
-<div className="progress">
-
-<input
-
-type="range"
-
-min="0"
-
-max={duration}
-
-value={currentTime}
-
-onChange={(e)=>{
-
-audioRef.current.currentTime=e.target.value;
-
-setCurrentTime(e.target.value);
-
-}}
-
-/>
-
-<div className="time">
-
-<span>{formatTime(currentTime)}</span>
-
-<span>{formatTime(duration)}</span>
-
-</div>
-
-</div>
-
-<div className="controls">
-
-<button onClick={previousSong}>
-
-<FaStepBackward/>
-
-</button>
-
-<button
-
-className="play"
-
-onClick={playPause}
-
->
-
-{
-
-isPlaying
-
-?
-
-<FaPause/>
-
-:
-
-<FaPlay/>
+    return;
 
 }
 
-</button>
+    nextSong();
 
-<button onClick={nextSong}>
+};
 
-<FaStepForward/>
+  audio.addEventListener(
+    "ended",
+    handleEnded
+  );
 
-</button>
+  return () => {
 
-</div>
+    audio.removeEventListener(
+      "ended",
+      handleEnded
+    );
 
-<div className="queue">
+  };
 
-    <h3>Coming Up</h3>
+}, [currentSong]);
 
-    {playlist
-        .filter(song => song.id !== currentSong.id)
-        .map(song => (
+useEffect(()=>{
 
-            <div
-                className="queueItem"
-                key={song.id}
-                onClick={() => {
-                    setCurrentSong(song);
-                    setIsPlaying(true);
-                }}
-            >
+const audio=audioRef.current;
 
-                <img
-                    src={song.cover}
-                    alt={song.title}
-                />
+const update=()=>{
 
-                <div>
-                    <strong>{song.title}</strong>
-                    <p>{song.artist}</p>
-                </div>
+setCurrentTime(audio.currentTime);
 
-            </div>
+}
 
-        ))}
+const loaded=()=>{
 
-</div>
+setDuration(audio.duration);
 
-</div> {/* phone */}
+}
 
-{/* First Popup */}
-{showPopup && (
+audio.addEventListener("timeupdate",update);
 
-<div className="popupOverlay">
+audio.addEventListener("loadedmetadata",loaded);
 
-    <div className="popup">
+return()=>{
 
-        <h2>that's all...</h2>
+audio.removeEventListener("timeupdate",update);
 
-        <p>
-            would you like me to add
-            <br />
-            one more song?
-        </p>
+audio.removeEventListener("loadedmetadata",loaded);
 
-        <div className="popupButtons">
+}
 
-            <button
-                onClick={() => setShowPopup(false)}
-            >
-                No
-            </button>
+},[]);
 
-            <button
-                onClick={() => {
-                    setShowPopup(false);
-                    setShowSmilePopup(true);
-                }}
-            >
-                Yes
-            </button>
+const playPause = async () => {
 
-        </div>
+    const audio = audioRef.current;
 
-    </div>
+    if (isPlaying) {
 
-</div>
+        audio.pause();
 
-)}
+        setIsPlaying(false);
 
-{/* Second Popup */}
-{showSmilePopup && (
+    } else {
 
-<div className="popupOverlay">
+        try {
 
-    <div className="popup">
+            await audio.play();
 
-        <h2>hehe...</h2>
+            setIsPlaying(true);
 
-        <p>
-            but first...
-            <br /><br />
+        } catch (err) {
 
-            smile first.
-            <br /><br />
+            console.log(err);
 
-            you're way too cute
-            <br />
-            not to smile.
-        </p>
+        }
 
-        <button
-            className="singleButton"
-            onClick={() => {
+    }
 
-                setShowSmilePopup(false);
+};
 
-                // If you have a hidden fourth song
-                if (playlist.length > 3) {
-                    setCurrentSong(playlist[3]);
-                    setIsPlaying(true);
-                }
+const nextSong=()=>{
 
-            }}
-        >
-            I smiled 😊
-        </button>
+const index=playlist.findIndex(
 
-    </div>
-
-</div>
-
-)}
-
-</div> 
+s=>s.id===currentSong.id
 
 );
+
+const next=(index+1)%playlist.length;
+
+setCurrentSong(playlist[next]);
+
+}
+
+const previousSong=()=>{
+
+const index=playlist.findIndex(
+
+s=>s.id===currentSong.id
+
+);
+
+const prev=(index-1+playlist.length)%playlist.length;
+
+setCurrentSong(playlist[prev]);
+
+}
+
+  return (
+
+<div
+className="app"
+style={{
+
+background:`
+
+linear-gradient(
+180deg,
+
+${currentSong.theme},
+
+#ffffff
+
+)
+
+`
+
+}}
+>
+
+      <div className="particles">
+
+{
+
+Array.from({
+
+length:12
+
+}).map((_,i)=>(
+
+<span
+
+key={i}
+
+/>
+
+))
+
+}
+
+</div>
+
+      <div className="phone">
+
+        <Header />
+
+        <AlbumPlayer
+
+        currentSong={currentSong}
+
+        isPlaying={isPlaying}
+
+        />
+
+        <ProgressBar
+
+        currentTime={currentTime}
+
+        duration={duration}
+
+        audioRef={audioRef}
+
+        setCurrentTime={setCurrentTime}
+
+        />
+
+        <PlayerControls
+
+        isPlaying={isPlaying}
+
+        playPause={playPause}
+
+        nextSong={nextSong}
+
+        previousSong={previousSong}
+
+        />
+
+        <Queue
+          playlist={playlist}
+          currentSong={currentSong}
+          setCurrentSong={setCurrentSong}
+        />
+
+      </div>
+
+    <Popup
+    showPopup={showPopup}
+    setShowPopup={setShowPopup}
+    onUnlock={() => {
+
+        setSecretUnlocked(true);
+
+        setCurrentSong(playlist[3]);
+
+        setIsPlaying(true);
+
+    }}
+/>
+
+
+<Ending showEnding={showEnding} />
+
+    </div>
+
+  );
 
 }
 
