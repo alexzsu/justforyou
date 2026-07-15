@@ -1,7 +1,7 @@
 .album {
   position: relative;
-  width: 220px;
-  height: 220px;
+  width: clamp(170px, 52vw, 220px);
+  height: clamp(170px, 52vw, 220px);
   margin: 8px auto 20px;
   display: flex;
   align-items: center;

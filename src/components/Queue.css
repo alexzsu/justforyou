@@ -1,15 +1,5 @@
 .queue {
   margin-top: 22px;
-  flex: 1;
-  min-height: 0;
-  max-height: 220px;
-  overflow-y: auto;
-  overflow-x: hidden;
-  -webkit-overflow-scrolling: touch;
-  touch-action: pan-y;
-  padding-right: 4px;
-  position: relative;
-  z-index: 5;
 }
 
 .queue h3 {
@@ -17,16 +7,6 @@
   color: var(--text-secondary);
   margin-bottom: 10px;
   letter-spacing: 0.5px;
-}
-
-.queue::-webkit-scrollbar {
-  width: 5px;
-}
-
-.queue::-webkit-scrollbar-thumb {
-  background: var(--accent-purple);
-  border-radius: 10px;
-  opacity: 0.5;
 }
 
 .queueItem {
@@ -53,6 +33,7 @@
   border-radius: 10px;
   object-fit: cover;
   box-shadow: 0 3px 8px rgba(150, 110, 190, 0.25);
+  flex-shrink: 0;
 }
 
 .queueText strong {
