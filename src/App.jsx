@@ -200,45 +200,45 @@ function App() {
         ))}
       </div>
 
-      <div className="phone">
-        <MeowButton isPlaying={isPlaying} />
-        <Header />
+<div className="phoneFloatWrapper">
+  <div className="phone">
+    <MeowButton isPlaying={isPlaying} />
 
-        <AlbumPlayer
-          currentSong={currentSong}
-          isPlaying={isPlaying}
-          isLiked={likedSongs.has(currentSong.id)}
-          onToggleLike={toggleLike}
-        />
+    <Header />
 
-        <ProgressBar
-          currentTime={currentTime}
-          duration={duration}
-          audioRef={audioRef}
-          setCurrentTime={setCurrentTime}
-        />
+    <AlbumPlayer
+      currentSong={currentSong}
+      isPlaying={isPlaying}
+      isLiked={likedSongs.has(currentSong.id)}
+      onToggleLike={toggleLike}
+    />
 
-        <PlayerControls
-          isPlaying={isPlaying}
-          playPause={playPause}
-          nextSong={nextSong}
-          previousSong={previousSong}
-        />
+    <ProgressBar
+      currentTime={currentTime}
+      duration={duration}
+      audioRef={audioRef}
+      setCurrentTime={setCurrentTime}
+    />
 
-        <Queue
-          playlist={playlist}
-          currentSong={currentSong}
-          setCurrentSong={setCurrentSong}
-          secretUnlocked={secretUnlocked}
-        />
+    <PlayerControls
+      isPlaying={isPlaying}
+      playPause={playPause}
+      nextSong={nextSong}
+      previousSong={previousSong}
+    />
 
-        <button
-          className="requestTrigger"
-          onClick={() => setShowRequest(true)}
-        >
-          🎵 request a song
-        </button>
-      </div>
+    <Queue
+      playlist={playlist}
+      currentSong={currentSong}
+      setCurrentSong={setCurrentSong}
+      secretUnlocked={secretUnlocked}
+    />
+
+    <button className="requestTrigger" onClick={() => setShowRequest(true)}>
+      🎵 request a song
+    </button>
+  </div>
+</div>
 
       
 

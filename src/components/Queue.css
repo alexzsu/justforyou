@@ -1,5 +1,7 @@
 .queue {
   margin-top: 22px;
+  flex: 1;
+  min-height: 0;
   max-height: 220px;
   overflow-y: auto;
   overflow-x: hidden;

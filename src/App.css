@@ -117,8 +117,15 @@ body {
   -webkit-backdrop-filter: blur(24px) saturate(160%);
   border: 1px solid var(--glass-border);
   box-shadow: var(--glass-shadow), inset 0 1px 0 rgba(255,255,255,0.5);
+  display: flex;
+  flex-direction: column;
+  max-height: 90vh;
+}
+
+/* Wrap this OUTSIDE .phone in App.js to keep the float animation
+   without breaking touch scroll inside .phone */
+.phoneFloatWrapper {
   animation: gentleFloat 6s ease-in-out infinite;
-  transition: box-shadow 0.4s var(--ease-smooth);
 }
 
 @keyframes gentleFloat {
