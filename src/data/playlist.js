@@ -171,16 +171,76 @@ const playlist = [
   },
   {
     id: 18,
+    title: "Lily of The Valley",
+    artist: "DANIEL",
+    cover: "/covers/lily.jpg",
+    audio: "/songs/lily.mp3",
+    note: "",
+    theme:"#9a2b38b7",
+    liked: false
+  },
+  {
+    id: 19,
+    title: "Last Night on Earth",
+    artist: "Green Day",
+    cover: "/covers/lastnight.jpg",
+    audio: "/songs/lastnight.mp3",
+    note: "",
+    theme:"#d58e1b",
+    liked: false
+  },
+  {
+    id: 20,
+    title: "Glue Song",
+    artist: "beabadoobee",
+    cover: "/covers/glue.jpg",
+    audio: "/songs/glue.mp3",
+    note: "",
+    theme:"#6e4164",
+    liked: false
+  },
+  {
+    id: 21,
+    title: "I Thought I Saw Your Face Today",
+    artist: "She & Him",
+    cover: "/covers/thought.jpg",
+    audio: "/songs/thought.mp3",
+    note: "",
+    theme:"#dab216",
+    liked: false
+  },
+  {
+    id: 22,
+    title: "Those Eyes",
+    artist: "New West",
+    cover: "/covers/those.jpg",
+    audio: "/songs/those.mp3",
+    note: "",
+    theme:"#39579a",
+    liked: false
+  },
+  {
+    id: 23,
+    title: "love.",
+    artist: "wave to earth",
+    cover: "/covers/love.jpg",
+    audio: "/songs/love.mp3",
+    note: "",
+    theme:"#0b9782",
+    liked: false
+  },
+  {
+    id: 24,
     title: "Leaves",
     artist: "Ben&Ben",
     cover: "/covers/leaves.jpg",
     audio: "/songs/leaves.mp3",
     note: "",
-    theme:"#239e15",
+    theme:"#35a229",
     liked: false
   },
   {
-    id: 19,
+    id: 25,
     title: "Pwede Ka Ba?",
     artist: "Frank Ely",
     cover: "/covers/pwede.jpg",

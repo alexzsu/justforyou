@@ -7,6 +7,12 @@ function Ending({ showEnding }) {
   return (
     <div className="endingOverlay">
 
+      <div className="petals">
+        {Array.from({ length: 24 }).map((_, i) => (
+          <span key={i} className={`petal petal-${(i % 4) + 1}`} />
+        ))}
+      </div>
+
       <div className="endingCard">
 
         <h2>one last thing...</h2>
@@ -26,7 +32,7 @@ function Ending({ showEnding }) {
           take care of yourself.
           <br /><br />
 
-          ♡
+          <span className="endingHeart">♡</span>
         </p>
 
       </div>

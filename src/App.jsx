@@ -91,7 +91,7 @@ function App() {
           audioRef.current.currentTime = 0;
           setCurrentTime(0);
           setIsPlaying(false);
-        }, 5000);
+        }, 10000);
 
         return;
       }
