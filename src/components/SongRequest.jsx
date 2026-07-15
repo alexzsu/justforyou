@@ -55,7 +55,7 @@ function SongRequest({ showRequest, setShowRequest }) {
         {status === "sent" ? (
           <div className="requestSent">
             <span className="sentIcon">💌</span>
-            <h2>sent, with love.</h2>
+            <h2>sent.</h2>
             <p>
               thank you for sharing this with me.
               <br />
@@ -77,7 +77,7 @@ function SongRequest({ showRequest, setShowRequest }) {
             <p className="requestSub">
               tell me what you'd love to hear next,
               <br />
-              and I'll add it to our playlist.
+              and I'll add it to playlist.
             </p>
 
             <form onSubmit={handleSubmit}>

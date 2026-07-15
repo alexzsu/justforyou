@@ -194,6 +194,11 @@ function App() {
         }}
       />
 
+      <div className="lightLeak" />
+      <div className="vignette" />
+      <div className="filmGrain" />
+
+
       <div className="particles">
         {Array.from({ length: 14 }).map((_, i) => (
           <span key={i} />
