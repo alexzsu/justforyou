@@ -1,8 +1,12 @@
 .queue {
+  position: relative;
   margin-top: 22px;
-  max-height: 220px;
+  max-height: 340px;
   overflow-y: auto;
   padding-right: 4px;
+  -webkit-overflow-scrolling: touch;
+  mask-image: linear-gradient(to bottom, black 90%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, black 90%, transparent 100%);
 }
 
 .queue h3 {
@@ -10,6 +14,9 @@
   color: var(--text-secondary);
   margin-bottom: 10px;
   letter-spacing: 0.5px;
+  position: sticky;
+  top: 0;
+  background: transparent;
 }
 
 .queue::-webkit-scrollbar {
