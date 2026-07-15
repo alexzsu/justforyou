@@ -1,73 +1,38 @@
 import "./ProgressBar.css";
 
-function ProgressBar({
+function ProgressBar({ currentTime, duration, audioRef, setCurrentTime }) {
 
-currentTime,
+  const format = (time) => {
+    if (isNaN(time)) return "0:00";
+    const m = Math.floor(time / 60);
+    const s = Math.floor(time % 60);
+    return `${m}:${s.toString().padStart(2, "0")}`;
+  };
 
-duration,
+  const percent = duration ? (currentTime / duration) * 100 : 0;
 
-audioRef,
+  return (
+    <div className="progress">
 
-setCurrentTime
+      <input
+        type="range"
+        min="0"
+        max={duration}
+        value={currentTime}
+        style={{ "--progress": `${percent}%` }}
+        onChange={(e) => {
+          audioRef.current.currentTime = e.target.value;
+          setCurrentTime(e.target.value);
+        }}
+      />
 
-}){
+      <div className="time">
+        <span>{format(currentTime)}</span>
+        <span>{format(duration)}</span>
+      </div>
 
-const format=(time)=>{
-
-if(isNaN(time)) return "0:00";
-
-const m=Math.floor(time/60);
-
-const s=Math.floor(time%60);
-
-return `${m}:${s.toString().padStart(2,"0")}`;
-
-}
-
-return(
-
-<div className="progress">
-
-<input
-
-type="range"
-
-min="0"
-
-max={duration}
-
-value={currentTime}
-
-onChange={(e)=>{
-
-audioRef.current.currentTime=e.target.value;
-
-setCurrentTime(e.target.value);
-
-}}
-
-/>
-
-<div className="time">
-
-<span>
-
-{format(currentTime)}
-
-</span>
-
-<span>
-
-{format(duration)}
-
-</span>
-
-</div>
-
-</div>
-
-);
-
+    </div>
+  );
 }
 
 export default ProgressBar;

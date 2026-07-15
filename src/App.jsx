@@ -11,6 +11,8 @@ import PlayerControls from "./components/PlayerControls";
 import Queue from "./components/Queue";
 import Popup from "./components/Popup";
 import Ending from "./components/Ending";
+import SongRequest from "./components/SongRequest";
+import MeowButton from "./components/MeowButton";
 
 function App() {
 
@@ -25,13 +27,35 @@ function App() {
   const [duration, setDuration] = useState(0);
   const [secretUnlocked, setSecretUnlocked] = useState(false);
 
+  const [likedSongs, setLikedSongs] = useState(new Set());
+  const [showRequest, setShowRequest] = useState(false);
+
+  // Smooth background crossfade — two stacked layers, swap opacity on song change
+  const [activeLayer, setActiveLayer] = useState(0);
+  const [layerColors, setLayerColors] = useState([
+    playlist[0].theme,
+    playlist[0].theme
+  ]);
+
   const secretSong = playlist.find(song => song.secret);
   const visibleSongs = playlist.filter(song => !song.secret);
   const lastVisibleSong = visibleSongs[visibleSongs.length - 1];
 
   const audioRef = useRef(new Audio());
 
-  // Load a new song whenever currentSong changes (NOT on isPlaying toggle)
+  useEffect(() => {
+    const nextLayer = activeLayer === 0 ? 1 : 0;
+
+    setLayerColors(prev => {
+      const updated = [...prev];
+      updated[nextLayer] = currentSong.theme || prev[nextLayer];
+      return updated;
+    });
+
+    setActiveLayer(nextLayer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentSong]);
+
   useEffect(() => {
     const audio = audioRef.current;
 
@@ -85,13 +109,8 @@ function App() {
   useEffect(() => {
     const audio = audioRef.current;
 
-    const update = () => {
-      setCurrentTime(audio.currentTime);
-    };
-
-    const loaded = () => {
-      setDuration(audio.duration);
-    };
+    const update = () => setCurrentTime(audio.currentTime);
+    const loaded = () => setDuration(audio.duration);
 
     audio.addEventListener("timeupdate", update);
     audio.addEventListener("loadedmetadata", loaded);
@@ -121,9 +140,7 @@ function App() {
   const nextSong = () => {
     if (currentSong.secret) return;
 
-    const index = visibleSongs.findIndex(
-      song => song.id === currentSong.id
-    );
+    const index = visibleSongs.findIndex(song => song.id === currentSong.id);
 
     if (index === visibleSongs.length - 1) {
       setShowPopup(true);
@@ -140,32 +157,59 @@ function App() {
       return;
     }
 
-    const index = visibleSongs.findIndex(
-      song => song.id === currentSong.id
-    );
+    const index = visibleSongs.findIndex(song => song.id === currentSong.id);
 
     if (index > 0) {
       setCurrentSong(visibleSongs[index - 1]);
     }
   };
 
+  const toggleLike = () => {
+    setLikedSongs(prev => {
+      const updated = new Set(prev);
+      if (updated.has(currentSong.id)) {
+        updated.delete(currentSong.id);
+      } else {
+        updated.add(currentSong.id);
+      }
+      return updated;
+    });
+  };
+
   return (
-    <div
-      className="app"
-      style={{
-        background: `linear-gradient(180deg, ${currentSong.theme}, #ffffff)`
-      }}
-    >
+    <div className="app">
+
+      <div
+        className="bgLayer"
+        style={{
+          background: `linear-gradient(180deg, ${layerColors[0]}, #fdfbff)`,
+          opacity: activeLayer === 0 ? 1 : 0
+        }}
+      />
+      <div
+        className="bgLayer"
+        style={{
+          background: `linear-gradient(180deg, ${layerColors[1]}, #fdfbff)`,
+          opacity: activeLayer === 1 ? 1 : 0
+        }}
+      />
+
       <div className="particles">
-        {Array.from({ length: 12 }).map((_, i) => (
+        {Array.from({ length: 14 }).map((_, i) => (
           <span key={i} />
         ))}
       </div>
 
       <div className="phone">
+        <MeowButton isPlaying={isPlaying} />
         <Header />
 
-        <AlbumPlayer currentSong={currentSong} isPlaying={isPlaying} />
+        <AlbumPlayer
+          currentSong={currentSong}
+          isPlaying={isPlaying}
+          isLiked={likedSongs.has(currentSong.id)}
+          onToggleLike={toggleLike}
+        />
 
         <ProgressBar
           currentTime={currentTime}
@@ -187,7 +231,16 @@ function App() {
           setCurrentSong={setCurrentSong}
           secretUnlocked={secretUnlocked}
         />
+
+        <button
+          className="requestTrigger"
+          onClick={() => setShowRequest(true)}
+        >
+          🎵 request a song
+        </button>
       </div>
+
+      
 
       <Popup
         showPopup={showPopup}
@@ -200,6 +253,10 @@ function App() {
       />
 
       <Ending showEnding={showEnding} />
+      <SongRequest
+        showRequest={showRequest}
+        setShowRequest={setShowRequest}
+      />
     </div>
   );
 }

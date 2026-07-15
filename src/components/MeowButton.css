@@ -1,0 +1,76 @@
+.meowButton {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 34px;
+  height: 34px;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg-soft);
+  backdrop-filter: blur(10px);
+  font-size: 15px;
+  cursor: pointer;
+  opacity: 0.55;
+  box-shadow: 0 4px 10px rgba(150, 110, 190, 0.2);
+  transition: transform 0.25s var(--ease-smooth), opacity 0.25s ease, box-shadow 0.25s ease;
+  z-index: 10;
+}
+
+.meowButton:hover {
+  opacity: 1;
+  transform: translateY(-1px) scale(1.08);
+  box-shadow: 0 6px 14px rgba(150, 110, 190, 0.3);
+}
+
+.meowButton:active {
+  transform: scale(0.9);
+}
+
+.meowButton.wiggle {
+  animation: catWiggle 0.5s var(--ease-smooth);
+}
+
+@keyframes catWiggle {
+  0% { transform: rotate(0deg) scale(1); }
+  20% { transform: rotate(-14deg) scale(1.1); }
+  40% { transform: rotate(12deg) scale(1.1); }
+  60% { transform: rotate(-8deg) scale(1.05); }
+  80% { transform: rotate(6deg) scale(1.02); }
+  100% { transform: rotate(0deg) scale(1); }
+}
+
+.pawBurst {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.burstPaw {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  font-size: 10px;
+  transform: translate(-50%, -50%);
+  animation: pawFloat 0.8s ease-out forwards;
+}
+
+@keyframes pawFloat {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(0.5) rotate(0deg);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(calc(-50% + var(--tx)), calc(-50% + var(--ty))) scale(1.1) rotate(20deg);
+  }
+}
+
+.meowButton.disabled {
+  opacity: 0.25;
+  cursor: default;
+  pointer-events: none;
+}

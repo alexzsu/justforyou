@@ -79,7 +79,7 @@ function Popup({
 
               }}
             >
-              I smiled 😊
+              I smiled 
             </button>
 
           </>
